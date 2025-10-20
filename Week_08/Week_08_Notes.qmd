@@ -88,3 +88,7 @@ Most things!
 But not figures or rendered files (pdf, png, html, etc.)
 
 FOR SURE track code files, data, and README
+
+### The Process
+
+ALWAYS add, commit, and SOMETIMES push
