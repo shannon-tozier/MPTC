@@ -80,3 +80,11 @@ like literally basically everything gets done with git
 it is very powerful but not very friendly
 
 we are going to use a small fraction of it as just a linear logbook
+
+### What must we track?
+
+Most things!
+
+But not figures or rendered files (pdf, png, html, etc.)
+
+FOR SURE track code files, data, and README
