@@ -1,0 +1,164 @@
+---
+title: "Week 06 Problem Set: Traffic Fatalities"
+author: "Shannon Tozier"
+date: "`r Sys.Date()`"
+format: html
+---
+
+```{r}
+#| label = "load-libraries-data",
+#| warning = FALSE,
+#| message = FALSE
+library(tidyverse)
+library(here)
+library(socviz)
+```
+
+The data are from the Federal Accident Reporting System run by the National Highway Traffic Safety Administration. We have two datasets.
+
+# First Table
+
+The first table was downloaded from this URL: <https://www-fars.nhtsa.dot.gov/States/StatesCrashesAndAllVictims.aspx>. At the time of writing, it's the table labeled "Person Killed, by STATE and Age Group - State : USA, Year : 2023". I downloaded the Excel file and very slightly cleaned it up. It is in the `data/` folder of this project as `fars-persons-killed-by-state-and-age-2023.csv`.
+
+First we read in the data:
+
+```{r}
+df_state <- read_csv(here("data", "fars-persons-killed-by-state-and-age-2023.csv"))
+
+df_state
+```
+
+## Task 1: Cleaning
+
+A. The Age categories are spread across the columns, from `< 5` to `Unknown`. Get them into long format so that your dataset consists of four columns named `state`, `age` and `count`, and `total`. Make sure the capitalization is correct (i.e. all lower case).
+
+```{r}
+d <- df_state |> 
+  pivot_longer(
+    cols = `< 5`:Unknown,
+    names_to = "age",
+    values_to = "count"
+  ) |> 
+  rename(state = State,
+         total = Total) |> 
+  relocate(total, .after = count)
+```
+
+B. Clean the `age` column to remove white space in the age categories and replace the `--` with `-`. Also make sure `<` and `>` do not have any whitespace before or after them.
+
+```{r}
+d <- d |> 
+  mutate(age = str_trim(age) |> 
+           str_remove_all("\\s") |> 
+           str_replace_all("--", "-")) 
+```
+
+## Task 2: Counting
+
+A. Filter the data to show the count by state for ages five to nine
+
+```{r}
+d |> 
+  filter(age == '5-9')
+```
+
+B. Make a table showing the count for each state of victims aged nine and under as single total. That is, we want the sum of ages nine and under as a single number, shown for each state. Do we lose any observations? Should we expect to? Why or why not?
+
+```{r}
+d2 <- d |> 
+  filter(age == '<5' | age == '5-9') |> 
+  group_by(state) |> 
+  tally(count) |> 
+  rename(under9 = n)
+```
+
+We "lose" observations in that now there is only 1 observation per state.
+
+# Second Table
+
+The second dataset also comes from FARS. It has daily counts of road accident fatalities for people aged seventeen and under, for the years 2009 to 2018.
+
+```{r}
+df_daily <- read_csv(here("data", "fars0-17daily.csv"))
+
+df_daily
+```
+
+## Task 3. Examine, clean, and reshape `df_daily`
+
+A. Take a look at the data. Some of the rows need to be removed. Which ones? Remove them as you see fit.
+
+```{r}
+d3 <- df_daily |> 
+  filter(!is.na(day))
+```
+
+B. Make it so that the `month` column has the correct month in every row. Hint: look at the documentation for the `tidyr::fill()` function to help you here.
+
+```{r}
+d3 <- d3 |>
+  fill(month)
+```
+
+C. Get the counts into long format with a column named `year` containing the year and a column named `count` containing the fatality counts.
+
+```{r}
+d3 <- d3 |> 
+  pivot_longer(
+    cols = `2009`:`2018`,
+    names_to = "year",
+    values_to = "count"
+  )
+```
+
+## Task 4. Dates
+
+D. Can you use the day, month, and year columns to make a new column called `date` that is actually of type `date`?
+
+-   Hint: the `ymd()` function in `lubridate` can intelligently parse date strings. Use `paste` to construct one of the form year-month-day.
+
+```{r}
+d3 <- d3 |> 
+  mutate(date = ymd(paste(year, month, day)))
+```
+
+E. Do any dates fail to parse? Can you identify why?
+
+The only ones to fail were the monthly totals (expected, as they do not have a day) and dates that did not exist (such as Feb 29 on non-leap-years).
+
+## Task 5. Trends
+
+Now that you've gotten the data in shape, explore it. Can you find any interesting patterns or trends?
+
+```{r}
+d3 |> 
+  filter(day == "Total") |> 
+  group_by(year) |> 
+  tally(count)
+
+d3 |> 
+  filter(day == "Total") |> 
+  group_by(month) |> 
+  tally(count, sort = TRUE)
+
+d4 <- d3 |> 
+  filter(day == "Total") |> 
+  mutate(date = ym(paste(year, month))) |> 
+  mutate(month = as.factor(month))
+
+d4$month <- fct_relevel(d4$month, "January", "February", "March", "April",
+                        "May", "June", "July", "August", "September", 
+                        "October", "November", "December")
+
+ggplot(data = d4,
+       aes(date,count, color = month)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~month)
+
+ggplot(data = d4,
+       aes(month,count, color = month)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~year, ncol = 2)
+```

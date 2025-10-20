@@ -1,0 +1,83 @@
+---
+title: "Week_07_Notes"
+format: html
+---
+
+# Ingesting Data
+
+## (with haven and readr)
+
+```{r}
+library(tidyverse)
+library(here)
+library(haven)
+library(socviz)
+```
+
+## csv files
+
+usually our best friend!
+
+but they are maybe actually evil bc sometimes data has commas in it and then everything is bad :(
+
+tidyverse: read_csv() \[use this instead of read.csv()\]
+
+read_csv2 uses ; instead of , for separators bc europe uses , for . in numbers
+
+## other crazy things
+
+read_line(): reads in lines as a vector rather than as a dataframe
+
+read_table(): for tables that just use random spaces to divide columns
+
+## remote reading files
+
+```{r}
+organ_remote <- read_csv("http://kjhealy.co/organdonation.csv")
+
+organ_remote
+```
+
+the function will tell you how it read in the columns—make sure to look at this!!!
+
+use "spec(x)" to see them
+
+## normalizing names and recoding
+
+janitor::clean_names() : this names names all lowercase, removes spaces, etc
+
+## finding problems
+
+if it gives you warnings when reading something in, you can use "problems(x)" to see what went wrong
+
+you can specify within read_csv() to tell it how to read in certain columns (yay!)
+
+## removing missing values
+
+janitor::remove_empty("rows") : remove rows where all columns are empty (there is an inverse for columns)
+
+## foreign formats
+
+aka booooo stata
+
+read_stata() is in haven
+
+stata often comes with dbl+lbl column types
+
+can drop all labels with zap_labels() and zap_missing() but you don't really wanna do this
+
+so instead you can convert the labels with mutate and across
+
+## partial application of functions
+
+purr package has partial() which does... something
+
+making your own mini functions, maybe? simple little guys?
+
+can make a bunch of them and put them in a file or package so you can use them a bunch
+
+## more factors
+
+forcats package!
+
+fct_recode(), fct_relabel(), fct_relevel(), etc.

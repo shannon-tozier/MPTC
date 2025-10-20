@@ -1,0 +1,82 @@
+---
+title: "Week_08_Notes"
+format: html
+---
+
+# Version Control with Git & GitHub
+
+## Backups
+
+-   Secure
+
+-   Automated
+
+-   Redundant
+
+-   Remote
+
+### These are NOT backups
+
+-   somewhere else on your computer
+
+-   old computer
+
+-   email attachment
+
+-   usb drive sitting in a random drawer
+
+### Backups but not good ones?
+
+-   Google Drive
+
+-   Dropbox
+
+-   Box
+
+-   Git/GitHub
+
+### Pay for a Reputable Service
+
+-   like Backblaze
+
+## Knowing what you did
+
+Having a good record of your own work
+
+### We need to keep track
+
+A "research project' is basically just a folder full of files and subfolders with more files
+
+We need to track things *at the level of our project*
+
+The modern solution is called Distributed Version Control Systems (DVCS)
+
+### Problems that DVCS solves
+
+-   track changes
+
+-   keep track of who made changes and when
+
+-   jump back to previous iterations of the project
+
+-   manage new content or revision by breaking them into branches that can be tracked
+
+-   merge these branches back into the main line of the project
+
+-   figure out when a change that breaks something later got introduced earlier
+
+### A VCS is a DAG!
+
+"causal history" of a project
+
+how did we get to the final iteration?
+
+## Git
+
+Git is the industry-standard DVCS
+
+like literally basically everything gets done with git
+
+it is very powerful but not very friendly
+
+we are going to use a small fraction of it as just a linear logbook

@@ -1,0 +1,204 @@
+---
+title: "Week_05_Notes"
+format: html
+---
+
+# dplyr
+
+```{r}
+library(here)
+library(socviz)
+library(tidyverse)
+```
+
+## dplyr core verbs
+
+### Actions for a single table
+
+Subset rows or columns
+
+-   filter()
+
+-   select()
+
+Group the data at the level we want
+
+-   group_by()
+
+Mutate the data (change something at the current level of grouping)
+
+-   mutate()
+
+Summarize or aggregate the data (make something at a higher level of grouping)
+
+-   summarize()
+
+```{r}
+gss_sm # subset of gss data for 2016
+```
+
+```{r}
+gss_sm |> 
+  select(id, bigregion, religion)
+```
+
+```{r}
+gss_sm |> 
+  group_by(bigregion) |> 
+  summarise(total = n()) # counts number of rows in each region group
+```
+
+```{r}
+gss_sm |> 
+  group_by(bigregion, religion) |> 
+  summarise(total = n())
+```
+
+```{r}
+gss_sm |> 
+  group_by(bigregion, religion) |> 
+  summarise(total = n()) |> 
+  mutate(freq = total / sum(total),
+         pct = round((freq*100), 1)) # prop of religions in each region
+```
+
+#### 3 options for counting up rows
+
+-   n()
+
+    -   group it yourself; result is grouped
+
+-   tally()
+
+    -   more compact, same thing as "summarize(n = n())"; result is grouped
+
+-   count()
+
+    -   one step, result not grouped
+
+```{r}
+gss_sm |> 
+  count(bigregion, religion) |> 
+  pivot_wider(names_from = bigregion, values_from = n) 
+```
+
+can pass results to a table, a graph, an object, etc.
+
+```{r}
+gss_sm |> 
+  group_by(bigregion, religion) |> 
+  tally() |> 
+  mutate(pct = round((n/sum(n))*100, 1)) |> 
+  drop_na() |> 
+  ggplot(aes(pct, reorder(religion, -pct), fill = religion)) +
+  geom_col() +
+  facet_wrap(~ bigregion, nrow = 1) +
+  guides(fill = "none") +
+  theme_minimal() +
+  labs(x = "Percent", y = NULL)
+```
+
+```{r}
+rel_by_region <- gss_sm |> 
+  group_by(bigregion, religion) |> 
+  tally() |> 
+  mutate(pct = round((n/sum(n))*100, 1))
+```
+
+```{r}
+region_by_religion <- gss_sm |> 
+  group_by(religion, bigregion) |> 
+  tally() |> 
+  mutate(pct = round((n/sum(n))*100, 1))
+```
+
+# Tidy Data and Pivoting
+
+```{r}
+library(gapminder)
+```
+
+## Tidy data
+
+-   Every row is a variable and each variable is a row
+
+-   Every column is an observation and each observation has a column
+
+-   Every cell is a value and each value has a cell
+
+**Dates are always YYYY-MM-DD**
+
+## Separate and Unite
+
+```{r}
+gss_sm |> 
+  select(race, degree) |> 
+  mutate(racedeg = interaction(race, degree)) |> 
+  group_by(racedeg) |> 
+  tally() |> 
+  separate(racedeg, sep = "\\.", into = c("race", "degree"))
+```
+
+## Regular Expressions
+
+regular expressions are ways of searching for a piece of text (a pattern) inside a larger body of text (a string)
+
+every pattern searching function in stringr has the same basic form
+
+```{r}
+# str_view(<STRING>, <PATTERN>, [...])
+```
+
+```{r}
+str_view(fruit, "apple")
+str_match(fruit, "apple")
+str_detect(fruit, "apple")
+```
+
+all replacement functions in stringr have same form as well
+
+```{r}
+# str_view(<STRING>, <PATTERN>, <REPLACEMENT>, [...])
+```
+
+"." matches everything. so to search for/match "." you have to use "\\\\."
+
+to match "\\" you have to use "\\\\\\\\"
+
+use "\^" to match the start of a string
+
+use "\$" to match the end of a string
+
+to match complete string, use "\^STRING\$"
+
+```{r}
+str_view(fruit, "^a")
+str_view(fruit, "a$")
+str_view(fruit, "^apple$")
+```
+
+"\\d" matches any digit
+
+"\\s" matches any whitespace
+
+"abc" matches a b or c
+
+use "\|" for or
+
+"?" is 0 or 1
+
+"+" is 1 or more
+
+"\*" is 0 or more
+
+{n} is exactly n
+
+{n,} is n or more
+
+{,m} is at most m
+
+{n,m} is between n and m
+
+```{r}
+str_view(fruit, "(..)\\1", match = TRUE) # find repeated letters
+```

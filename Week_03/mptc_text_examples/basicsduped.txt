@@ -1,0 +1,34 @@
+apple, banana, pear
+Apple, Banana, Pear,
+apple pie, apple, apple cake
+apple
+Apple
+Apple. Banana. Pear.
+Banana
+Guava
+Alabama
+pear
+peach, apple, plum
+grey
+gray
+griy
+groy
+A period at the end.
+
+apple, banana, pear
+Apple, Banana, Pear,
+apple pie, apple, apple cake
+apple
+Apple
+Apple. Banana. Pear.
+Banana
+Guava
+Alabama
+pear
+peach, apple, plum
+grey
+gray
+griy
+groy
+A period at the end.
+

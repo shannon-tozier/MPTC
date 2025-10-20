@@ -1,0 +1,36 @@
+---
+title: "Week_06_Notes"
+format: html
+---
+
+predicate function: function that returns TRUE or FALSE
+
+can use functions within "select()" such as "where(predicate function)" and "starts_with(character string)" and "matches(regular expression)"
+
+can create custom operators like `%nin%` <- Negate(`%in%`) 
+
+use "across()" to apply a function to multiple columns (kind of like a for loop) [look in week 5 slides for examples]
+
+anonymous function: "\(x)"
+
+sometimes functions start with "." just to avoid confusion with other objects
+
+slides also show how to make cumulative calculations: cumsum()
+
+lead() and lag(): allow access to previous and next vector values
+
+you can write functions using the "function()" function
+
+```{r}
+my_fun <- function(x) {
+  x + 1
+}
+
+my_fun(2)
+```
+
+give functions verb names that say what they do
+
+
+
+

@@ -1,0 +1,6 @@
+---
+title: "Assignment_02"
+format: html
+---
+
+I downloaded data from IPEDS (the Integrated Postsecondary Education Data System). I chose to download the data in a csv format, because that is the format I have more experience working with (the other available format was stata). IPEDS divides their data files into very specific sets of variables, so the file I downloaded only provides information on the number of students enrolled at the institution, the institutional retention rate, and the student-to-faculty ratio. While this could be used for very minor analysis, like seeing if there is any correlation between the student-to-faculty ratio and retention rates, in order to perform substantial analysis I would need to join this data with more of the available IPEDS data (such as other enrollment statistics). 

@@ -1,0 +1,106 @@
+---
+title: "Week_03_Notes"
+format: html
+---
+
+# Files and the File System
+
+## Files
+
+### Automating Information and Control
+
+Insertion, Deletion, and Updating
+
+### Tabulation Machines
+
+Counting
+
+### Programmable Computers
+
+## What Files Are
+
+A file is a **metaphor.** A file is an abstraction (way of naming and organizing data that is just "ones and zeros").
+
+There are lots of kinds of files! But labeling them is for us, not the computer.
+
+### Plain-Text File
+
+You see what is in the file when you open it! (Technically still in binary).
+
+ASCII is a seven-bit system that is limited to 128 combinations. Eight-bit systems allow for 256. Now we have Unicode which has 1,112,064 code points. Hard to tell which system something is in by just looking at it.
+
+### Input/Output
+
+Screens! PCs!
+
+## Back to the File System
+
+Files are named items that live in a hiearchical file system.
+
+# The File System and the Shell
+
+## Files
+
+A file is a stream of bytes that a program can read/interact with. Files have a location in the file system.
+
+In Unix "Everything is a file"
+
+Pipes are like an assembly line where you can add more functions/programs
+
+## File System Hierarchy
+
+Directories that contain files
+
+Unix is a multi-tasking, multi-user system.
+
+### Path Conventions
+
+"/" represents a division in the file hierarchy. Allows you to write out a path to a specific file
+
+### Standard Unix Locations
+
+locations get mapped together in the \$PATH, which is an environment variable that tells the system where executables can be found.
+
+Windows is evil and uses "\\" and also does not have a "which" command :(
+
+### Local and Remote Files
+
+Local files are the files on our own computer. We are confining ourselves to local files that are also in our project directory.
+
+A URL is a path to a remote file on someone else's computer. You can use the "curl" command to get remote files into the terminal.
+
+## The Shell
+
+A shell is a way for you to tell the operating system to do things
+
+Presents itself as a command line/command prompt where you type instructions. There are also graphical shells, technically.
+
+Original shell is "sh". Most widely used is "bash". I will use Git Bash which pretends to be a Unix shell. Yay!
+
+A shell waits for commands. This way of interacting is a REPL (Read-Eval-Print Loop).
+
+## Getting Around the File System
+
+pwd = where am i?
+
+ls = list files
+
+cd = moving around the tree
+
+commands have options! usually a dash - with a letter.
+
+Path beginning with a "/" is an absolute path that starts at the root. Starting with "\~" starts at home directory. "../" means go up a level. "./" or nothing is for the current directory.
+
+### File Permissions
+
+Three things you can do to a file: read, write, execute. Different levels of users (user, group, world) have different permissions.
+
+### More commands
+
+wc= word count (lines, words, characters)
+
+cat = concatenate (showing contents of file in terminal)
+
+head = show top of file (10 lines by default, use -n to change number)
+
+tail = show bottom of file (10 lines by default, use -n to change number)

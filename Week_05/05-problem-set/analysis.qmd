@@ -1,0 +1,226 @@
+---
+title: "Week 05 Problem Set: Dogs of New York"
+author: "Shannon Tozier"
+date: "`r Sys.Date()`"
+format: html
+---
+
+```{r}
+#| label = "load-libraries-data",
+#| warning = FALSE,
+#| message = FALSE
+library(tidyverse)
+library(tidytext)
+library(ggrepel)
+```
+
+# Dogs of New York
+
+This data comes from New York City's Open Data initiative.
+
+We load the data as a package. If you get a message saying there's no such package, then run this line of code at the console *once*: `remotes::install_github("kjhealy/nycdogs")`. Then it should be available.
+
+```{r}
+library(nycdogs)
+
+nyc_license
+```
+
+The data are structured like this: each *row* contains the license record for a dog in a particular year. The columns are as follows:
+
+`animal_name` --- Name of dog. `animal_gender` --- Sex of dog. `animal_birth_year` --- Birth year `breed_rc` --- Breed of dog (simplier categories). `borough` --- Borough of owner. (Some boroughs are approximate due to zip codes.) `zip_code` --- Zip code of owner. `license_issued_date` --- Date license issued `license_expired_date` --- Date license expired `extract_year` --- Year record was extracted
+
+# Tasks
+
+## 1. A first look at the data.
+
+You'll use `group_by()` and `summarize()`, or `tally()` to answer these questions.
+
+-   
+
+    a.  Write some code to count the number of records there are for each extract year, and how many records are missing a value for the extract year.
+
+```{r}
+nyc_license |> 
+  group_by(extract_year) |> 
+  tally()
+```
+
+-   
+
+    b.  How many distinct dog breeds are there in the data?
+
+    ```{r}
+    nyc_license |> 
+      distinct(breed_rc)
+    ```
+
+    There are 327 distinct breeds
+
+-   
+
+    c.  Are there any notable differences in the ratio of male to female dogs in the city as a whole? What about by borough?
+
+    ```{r}
+    nyc_license |> 
+      filter(!is.na(animal_gender)) |> 
+      group_by(animal_gender) |> 
+      tally()
+    ```
+
+    For the city as a whole, there are about 20% more male dogs than female dogs
+
+    ```{r}
+    nyc_license |> 
+      filter(!is.na(animal_gender) & !is.na(borough)) |> 
+      group_by(borough, animal_gender) |> 
+      tally()
+    ```
+
+    Across boroughs, the ratio of male to female dogs stays fairly consistent.
+
+-   
+
+    d.  Here are the first ten rows of the data again:
+
+```{r}
+nyc_license
+```
+
+Row 8 shows a Labrador named Chewbacca. Are there any other dogs in the data that have the names of major Star Wars characters?
+
+```{r}
+nyc_license |> 
+  group_by(animal_name) |> 
+  filter(animal_name %in% c("Chewbacca", "Han", "Luke", "Leia",
+                            "Anakin", "Padme", "Yoda", "Obi-Wan", "Ahsoka",
+                            "Kylo", "Rey", "Poe", "Finn")) |>
+  tally()
+```
+
+There are many, many dogs with Star Wars names.
+
+-   
+
+    e.  In class we saw some problems with the `animal_name` column, where there seemed to be typos and misspellings and so on. Are there any similar sorts of problems with the `borough` column or the `zip_code` column? (Hint: remember we subset rows with `filter()`)
+
+```{r}
+nyc_license |> 
+  group_by(borough) |> 
+  tally()
+
+nyc_license |> 
+  group_by(zip_code) |> 
+  filter(zip_code %in% nyc_zips$zip_code) |> 
+  tally()
+```
+
+## 2. Some Crosstabs
+
+-   
+
+    a.  What were the Top 5 dog names in each borough in 2016?
+
+```{r}
+nyc_license |> 
+  filter(!is.na(borough) & extract_year == 2016) |> 
+  group_by(borough, animal_name) |> 
+  tally() |> 
+  filter(!(animal_name %in% c("Unknown", "Name Not Provided", "Name"))) |> 
+  slice_max(n, n = 5) |> 
+  print(n = 25)
+```
+
+-   
+
+    b.  What were the Top 5 dog breeds in the whole city in 2018, in terms of the total number of dogs?
+
+    ```{r}
+    nyc_license |> 
+      filter(extract_year == 2018 & breed_rc != "Unknown") |> 
+      group_by(breed_rc) |> 
+      tally() |> 
+      slice_max(n, n = 5)
+    ```
+
+    The top breeds were Yorkshire Terrier, Labrador, Shih Tzu, Pit Bull, and Chihuahua.
+
+-   
+
+    c.  What were the Top 5 dog breeds in the whole city in 2018, as a percentage of all dogs?
+
+    ```{r}
+    nyc_license |> 
+      filter(extract_year == 2018 & breed_rc != "Unknown") |> 
+      group_by(breed_rc) |> 
+      tally(sort = TRUE) |> 
+      mutate(pct = (n/sum(n))*100) |> 
+      slice_max(pct, n = 5)
+    ```
+
+    The top 5 are the same as the top 5 breeds by count, because that is how percentages work.
+
+-   
+
+    d.  What were the Top 5 dog breeds in each borough in 2018, in terms of the total number of dogs in each borough?
+
+    ```{r}
+    nyc_license |> 
+      filter(extract_year == 2018 & !is.na(borough)) |> 
+      group_by(borough, breed_rc) |> 
+      filter(breed_rc != "Unknown") |> 
+      tally(sort = TRUE) |> 
+      slice_max(n, n = 5) |> 
+      print(n = 25)
+    ```
+
+-   
+
+    c.  Redo this table to show the top 5 dog breeds in each borough in 2018, this time as a percentage of all dogs in the borough.
+
+```{r}
+nyc_license |> 
+  filter(extract_year == 2018 & !is.na(borough)) |> 
+  group_by(borough, breed_rc) |> 
+  filter(breed_rc != "Unknown") |> 
+  tally(sort = TRUE) |> 
+  mutate(pct = (n/sum(n))*100) |> 
+  slice_max(pct, n = 5) |> 
+  print(n = 25)
+```
+
+## 3. A Graph
+
+-   
+
+    a.  Make a table of the top 10 dog *names* in each borough in 2018
+
+    ```{r}
+    dnbb <- 
+      nyc_license |> 
+      filter(extract_year == 2018 & !is.na(borough)) |> 
+      group_by(borough, animal_name) |> 
+      tally() |> 
+      filter(!(animal_name %in% c("Unknown", "Name Not Provided", "Name"))) |> 
+      slice_max(n, n = 10)
+    ```
+
+-   
+
+    b.  Make a graph with this table. First think about how best to graph it. Consider either `geom_col()` and `geom_point()`. Add a title and label the axes. Facet the graph by borough.
+
+-   
+
+    c.  Can you make it so that only the dog names in each borough are shown for that borough's facet?
+
+```{r}
+ggplot(dnbb,
+       aes(n, reorder_within(animal_name, n, borough), fill = animal_name)) +
+  geom_col() +
+  facet_wrap(~ borough, scales = "free_y") +
+  scale_y_reordered() +
+  labs(x = "Count",
+       y = NULL,
+       title = "Top 10 NYC Dog Names by Borough in 2018",
+       fill = "Name")
+```

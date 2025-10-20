@@ -1,0 +1,28 @@
+---
+title: "Covid Case Sample"
+author: "Shannon Tozier"
+format: html
+---
+
+## Setup
+
+```{r}
+library(tidyverse)
+```
+
+## Read in the data
+
+```{r}
+df <- read_csv(here::here("data", "uscases.csv"))
+```
+
+## Figtest
+
+```{r}
+mtcars |> 
+  ggplot(mapping = aes(x = hp, 
+                       y = mpg)) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(title = "This is the plot I want")
+```

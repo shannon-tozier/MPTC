@@ -1,0 +1,52 @@
+---
+title: "Week_04_Notes"
+format: html
+---
+
+```{r}
+library(tidyverse)
+```
+
+## Things to know about r
+
+### 1.  It is a calculator (can do arithmetic and logic)
+
+== for equality, ! for negation, != for inequality, etc.
+
+### 2.  Everything in r has a name
+
+some names are forbidden! like "TRUE" "FALSE" "NA" "NULL" "for" "if" etc. 
+keep lowercase for simplicity. 
+
+### 3. You can create objects
+
+assign things to a name to create an object
+we love concatenating! "c()" 
+
+### 4. You can do things to objects with functions
+
+functions always have () after their name
+functions take inputs, perform actions, and return outputs
+you can use ? with the function name to access help documentation
+functions can be nested but instead you should use the pipe |> 
+functions (objects) are bundled in packages
+
+### Vector types; Object classes
+
+objects are made of one or more vectors
+vectors can only have a single type; objects can have vectors of different types
+data frames are technically just lists
+
+## Making Graphs
+
+```{r}
+library(here)
+```
+
+```{r}
+df <- read_csv(here("Week_02/mptc_week_02/data", "ef2023d.csv"))
+```
+
+
+
+
