@@ -1,0 +1,145 @@
+---
+title: "Week_09_Notes"
+format: html
+---
+
+# Iterating on Data and Models
+
+```{r}
+library(here)
+library(tidyverse)
+library(socviz)
+library(gapminder)
+```
+
+Going back to "Split, Apply, Combine"
+
+## Loops?
+
+This is the traditional programming way
+
+but don't use loops to grow data frames by just slamming them together
+
+instead of loops, we are going to map() functions along a vector (which underneath does the same thing as a loop)
+
+this allows us to pipeline is ways we can't with for loops
+
+## mapping is just a kind of iteration
+
+purrr package has a lot of mapping functions that will return different classes of vectors
+
+map() will always return a list
+
+you can map over multiple inputs with map2() and pmap()
+
+```{r}
+map(gapminder, n_distinct)
+```
+
+this is the same as using across() but a little uglier
+
+but we know we want an integer when we are using n_distinct, so.......
+
+```{r}
+gapminder |> 
+  map_int(n_distinct)
+```
+
+now it is less ugly
+
+## wrangling models
+
+we want our model outputs to be rectangular tables (like we want literally everything)
+
+```{r}
+library(broom)
+```
+
+```{r}
+out <- lm(lifeExp ~ gdpPercap + log(pop) + continent,
+          data = gapminder)
+```
+
+standard way to look at results is with summary() or model_summary()
+
+but this is just a printout that we can't DO anything with
+
+```{r}
+out_tidy <- tidy(out) # now we get a tibble!
+```
+
+now that it is a tibble, we can do things with it! yay!
+
+### three ways to tidy
+
+**component level:** tidy() gives us what is under "Coefficients:" in summary()
+
+**observation level:** augment() gives us what is under "Residuals:" in summary() for each observation
+
+```{r}
+augment(out)
+```
+
+**model level:** glance() gives us what is under "Residual standard error:" in summary()
+
+```{r}
+glance(out)
+```
+
+this become more useful when you are comparing multiple models
+
+## Grouped Analysis
+
+```{r}
+eu77 <- gapminder |> 
+  filter(continent == "Europe", year == 1977)
+```
+
+```{r}
+fit <- lm(lifeExp ~ log(gdpPercap), data = eu77)
+```
+
+what if we want to do this for every combination of continent and year?
+
+```{r}
+df_nest <- gapminder |> 
+  group_by(continent, year) |> 
+  nest()
+
+df_nest 
+```
+
+holy shit we can have a column of data frames in a data frame
+
+and now we can map functions to all of those data frames
+
+```{r}
+fit_ols <- function(df) {
+  lm(lifeExp ~ log(gdpPercap), data = df)
+}
+```
+
+```{r}
+df_nest <- df_nest |> 
+  mutate(model = map(data, fit_ols))
+```
+
+now we have a column of regression models in the data frame with the data frames
+
+```{r}
+df_nest <- df_nest |> 
+  mutate(tidies = map(model, tidy))
+```
+
+now we have a column of data frames of the model coefficients!
+
+you can get one back if you want
+
+```{r}
+oc <- df_nest |> 
+  unnest(cols = c(tidies)) |> 
+  filter(term %nin% "(Intercept)" &
+           continent %in% "Oceania")
+```
+
+and now stats is coming back to haunt me :(
