@@ -1,0 +1,219 @@
+---
+title: "Week_10_Assignment"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(tidycensus)
+```
+
+Washington and Lee
+
+```{r}
+washlee10 <- get_acs(
+  state = "VA",
+  county = "Rockbridge",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2010
+)
+
+lexington10 <- get_acs(
+  state = "VA",
+  county = "Lexington",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2010
+)
+
+buenavista10 <- get_acs(
+  state = "VA",
+  county = "Buena Vista",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2010
+)
+
+washlee15 <- get_acs(
+  state = "VA",
+  county = "Rockbridge",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2015
+)
+
+lexington15 <- get_acs(
+  state = "VA",
+  county = "Lexington",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2015
+)
+
+buenavista15 <- get_acs(
+  state = "VA",
+  county = "Buena Vista",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2015
+)
+
+washlee20 <- get_acs(
+  state = "VA",
+  county = "Rockbridge",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2020
+)
+
+lexington20 <- get_acs(
+  state = "VA",
+  county = "Lexington",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2020
+)
+
+buenavista20 <- get_acs(
+  state = "VA",
+  county = "Buena Vista",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2020
+)
+```
+
+```{r}
+washlee10 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma") +
+  geom_sf(data = lexington10, aes(fill = estimate)) +
+  geom_sf(data = buenavista10, aes(fill = estimate))
+
+washlee15 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma") +
+  geom_sf(data = lexington15, aes(fill = estimate)) +
+  geom_sf(data = buenavista15, aes(fill = estimate))
+
+washlee20 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma") +
+  geom_sf(data = lexington20, aes(fill = estimate)) +
+  geom_sf(data = buenavista20, aes(fill = estimate))
+```
+
+
+
+Dartmouth
+
+```{r}
+dartmouth10 <- get_acs(
+  state = "NH",
+  county = "Grafton",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2010
+)
+
+dartmouth15 <- get_acs(
+  state = "NH",
+  county = "Grafton",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2015
+)
+
+dartmouth20 <- get_acs(
+  state = "NH",
+  county = "Grafton",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2020
+)
+```
+
+
+```{r}
+dartmouth10 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma")
+
+dartmouth15 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma")
+
+dartmouth20 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma")
+```
+
+
+Bryn Mawr
+
+```{r}
+brynmawr10 <- get_acs(
+  state = "PA",
+  county = "Montgomery",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2010
+)
+
+brynmawr15 <- get_acs(
+  state = "PA",
+  county = "Montgomery",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2015
+)
+
+brynmawr20 <- get_acs(
+  state = "PA",
+  county = "Montgomery",
+  geography = "tract",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2020
+)
+```
+
+```{r}
+brynmawr10 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma")
+
+brynmawr15 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma")
+
+brynmawr20 %>%
+  ggplot(aes(fill = estimate)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma")
+```
+
+
