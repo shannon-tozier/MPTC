@@ -1,0 +1,205 @@
+---
+title: "Week_10_Notes"
+format: html
+---
+
+# APIs and Databases
+
+## Iterating on the Census
+
+```{r}
+library(tidyverse)
+library(tidycensus)
+```
+
+one specific county
+
+```{r}
+out <- get_acs(geography = "county",
+               variables = "B19013_001",
+               state = "NY",
+               county = "New York",
+               survey = "acs1",
+               year = 2005)
+
+out
+```
+
+all counties
+
+```{r}
+out2 <- get_acs(geography = "county",
+               variables = "B19013_001",
+               state = "NY",
+               survey = "acs1",
+               year = 2005)
+
+out2
+```
+
+but if you omit year, you just get the most recent year.
+
+but we want all the years! so we must map()
+
+```{r}
+df <- 2005:2019 |> 
+  set_names() |> 
+  map(\(x) get_acs(geography = "county",
+               variables = "B19013_001",
+               state = "NY",
+               survey = "acs1",
+               year = x)) |> 
+  list_rbind(names_to = "year") |> 
+  mutate(year = as.integer(year))
+
+df
+```
+
+## NYC Citibike API
+
+```{r}
+gbfsurl <- "https://gbfs.citibikenyc.com/gbfs/2.3/gbfs.json"
+feeds <- jsonlite::fromJSON(gbfsurl)
+str(feeds)
+```
+
+```{r}
+feeds_df <- as_tibble(feeds)
+feeds_df
+```
+
+look just at english data
+
+```{r}
+feeds_df |> 
+  slice(1) |> 
+  unnest(data) |>
+  unnest(data)
+```
+
+this helps us find the specific url we need to get the specific data that we want
+
+# Databases
+
+## "Big" Data
+
+it's just data but bigger (there is more of it)
+
+data that is larger than your laptop's memory and makes it give up on life :(
+
+but most of the time we don't want *all* the data; we are only interested in a small subset (certain rows or columns)
+
+## Database Layouts
+
+a database is not one giant table; instead it is like a list of tables connected through keys
+
+this allows for clear and efficient storage of different levels of observation
+
+## Database Normalization
+
+taking your awful megatable and storing it in a way that doesn't suck
+
+minimizing redundancy and the potential for error
+
+(like IPEDS data where there is the ID in all the tables so you can link them)???
+
+## Talking to Databases
+
+usually done through an API or another DBI (DataBase Interface)
+
+but let's do it manually for fun
+
+open a connection
+
+```{r}
+library(DBI)
+
+con <- dbConnect(duckdb::duckdb(), path = ":memory:")
+```
+
+move the data into the database server
+
+R doesn't see it anymore, only the database does
+
+```{r}
+copy_to(
+  dest = con,
+  df = nycflights13::flights,
+  name = "flights",
+  temporary = FALSE,
+  indexes = list(
+    c("year", "month", "day"),
+    "carrier",
+    "tailnum",
+    "dest"
+  )
+)
+```
+
+make a tibble
+
+except what it puts out only *looks* like a tibble
+
+```{r}
+flights_db <- tbl(con, "flights")
+
+flights_db
+```
+
+you can do stuff with it though!
+
+but it won't count rows it hates doing that
+
+```{r}
+f_db <- flights_db |> 
+  select(year:day, dep_delay, arr_delay)
+```
+
+but it is ***not actually doing anything***. this is all happening within the database dreamland
+
+you won't get actual results back until you ask for them
+
+```{r}
+flights <- f_db |> 
+  collect()
+
+flights
+```
+
+now it exists for realsies.
+
+doing shit with multiple tables
+
+```{r}
+copy_to(
+  dest = con,
+  df = nycflights13::planes,
+  name = "planes",
+  temporary = FALSE,
+  indexes = "tailnum"
+)
+
+dbListTables(con)
+```
+
+```{r}
+planes_db <- tbl(con, "planes")
+```
+
+```{r}
+left_join(
+  flights_db,
+  planes_db |> rename(year_built = year),
+  by = "tailnum"
+) |> 
+  select(year, month, day, dep_time, arr_time, carrier, flight, 
+         tailnum, year_built, type, model)
+```
+
+\^ still not done for realsies BUT that shit together now
+
+**finishing up: close the connection**
+
+```{r}
+dbDisconnect(con)
+```

@@ -116,8 +116,6 @@ washlee20 %>%
   geom_sf(data = buenavista20, aes(fill = estimate))
 ```
 
-
-
 Dartmouth
 
 ```{r}
@@ -149,24 +147,25 @@ dartmouth20 <- get_acs(
 )
 ```
 
-
 ```{r}
 dartmouth10 %>%
   ggplot(aes(fill = estimate)) + 
   geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Median Income") +
+  labs(title = "Grafton County, NH", subtitle = 2010)
 
 dartmouth15 %>%
   ggplot(aes(fill = estimate)) + 
   geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Median Income") +
+  labs(title = "Grafton County, NH", subtitle = 2015)
 
 dartmouth20 %>%
   ggplot(aes(fill = estimate)) + 
   geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Median Income") +
+  labs(title = "Grafton County, NH", subtitle = 2020)
 ```
-
 
 Bryn Mawr
 
@@ -203,17 +202,18 @@ brynmawr20 <- get_acs(
 brynmawr10 %>%
   ggplot(aes(fill = estimate)) + 
   geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Median Income") +
+  labs(title = "Montgomery County, PA", subtitle = 2010)
 
 brynmawr15 %>%
   ggplot(aes(fill = estimate)) + 
   geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Median Income") +
+  labs(title = "Montgomery County, PA", subtitle = 2015)
 
 brynmawr20 %>%
   ggplot(aes(fill = estimate)) + 
   geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Median Income") +
+  labs(title = "Montgomery County, PA", subtitle = 2020)
 ```
-
-
