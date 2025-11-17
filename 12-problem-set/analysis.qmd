@@ -193,7 +193,7 @@ ggplot(df,
 ggplot(df,
        aes(x = pct_white_cat,
            y = openlength)) +
-  geom_col() +
+  geom_boxplot() +
   facet_wrap(~borough, nrow = 1)
 ```
 
@@ -203,6 +203,35 @@ ggplot(df,
 
     a.  *Either* choose one of the plots you've already made *or* create a new plot or map using the data. Work it up to something more finished. Aim for something that is both properly informative and as polished as you can make it.
 
--   
+    ```{r}
+    finalplot <- ggplot(df,
+           aes(x = pct_white_cat,
+               y = openlength,
+               color = pct_white_cat,
+               fill = pct_white_cat)) +
+      geom_boxplot(outlier.alpha = 0.05,
+                   alpha = 0.3) +
+      facet_wrap(~borough, ncol = 1) +
+      coord_flip(ylim = c(0, 1096)) +
+      theme_minimal() +
+      labs(title = "Length of NYC Open Complaints",
+           subtitle = "By Race and Borough, 2019",
+           caption = "Data sourced from the United States Census and NYC Open Data",
+           y = "Days Before Complaint Was Closed \n Markers at 1 and 2 Years",
+           x = "Percentage of White Population in Zip Code of Complaint") +
+      guides(fill = FALSE,
+             color = FALSE) +
+      geom_hline(yintercept = 365, linetype = "dashed", size = 0.8) +
+      geom_hline(yintercept = 730, linetype = "dashed", size = 0.8)
 
-    b.  Try saving this plot or map using `ggsave()`. Create it as a PNG or PDF file. Make its dimensions (width and height) the right size for what you draw.
+    ```
+
+    a.  Try saving this plot or map using `ggsave()`. Create it as a PNG or PDF file. Make its dimensions (width and height) the right size for what you draw.
+
+```{r}
+ggsave("finalplot.png",
+       plot = finalplot,
+       path = "figures",
+       width = 10,
+       height = 12)
+```
