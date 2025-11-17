@@ -1,0 +1,134 @@
+---
+title: "Week_12_Notes"
+format: html
+---
+
+# Helpers, Build Systems, Environments, Packages
+
+```{r}
+library(here)
+library(socviz)
+library(tidyverse)
+```
+
+## helpers
+
+### reprex
+
+We need a reprex!! smallest possible way to reproduce the problem
+
+```{r}
+library(reprex)
+```
+
+```{r}
+library(tidyverse)
+
+starwars |> 
+  count(homeworld, species) |> 
+  mutate(pct = n / sum(n) * 100) |> 
+  arrange(desc(pct))
+```
+
+copy ALL code to clipboard, then run "reprex()" in the console (yes with nothing in it!)
+
+it will show you how the code would run in a brand new R session
+
+then you can paste! (if you wanna ask for help somewhere)
+
+``` r
+library(tidyverse)
+#> Warning: package 'tidyverse' was built under R version 4.4.3
+#> Warning: package 'ggplot2' was built under R version 4.4.3
+#> Warning: package 'tibble' was built under R version 4.4.3
+#> Warning: package 'purrr' was built under R version 4.4.3
+#> Warning: package 'stringr' was built under R version 4.4.3
+
+starwars |> 
+  count(homeworld, species) |> 
+  mutate(pct = n / sum(n) * 100) |> 
+  arrange(desc(pct))
+#> # A tibble: 57 × 4
+#>    homeworld species      n   pct
+#>    <chr>     <chr>    <int> <dbl>
+#>  1 Tatooine  Human        8  9.20
+#>  2 <NA>      Human        6  6.90
+#>  3 Naboo     Human        5  5.75
+#>  4 Alderaan  Human        3  3.45
+#>  5 Naboo     Gungan       3  3.45
+#>  6 <NA>      Droid        3  3.45
+#>  7 Corellia  Human        2  2.30
+#>  8 Coruscant Human        2  2.30
+#>  9 Kamino    Kaminoan     2  2.30
+#> 10 Kashyyyk  Wookiee      2  2.30
+#> # ℹ 47 more rows
+```
+
+<sup>Created on 2025-11-17 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
+
+reprex has different output formats (r code, plaintext, etc.)
+
+### usethis
+
+automates setup processes for projects, git repositories, etc.
+
+can turn a random file into a project with create_project()
+
+this is how to turn an R project into a repository: use_git() followed by use_github()
+
+### tables
+
+tables hard :( tables mostly ugly :(
+
+-   tinytable
+
+    -   basic function is tt()
+
+    -   can style with other stuff in the package
+
+```{r}
+mtcars |> 
+  tinytable::tt()    # look how cutie!
+```
+
+-   gt
+
+    -   mainly makes html, not pdf
+
+    -   also gtsummary as a package
+
+    -   basically default to tinytable
+
+-   skimr
+
+    -   making codebook for self use (NOT publication)
+
+```{r}
+organdata |> skimr::skim(where(is.numeric)) |> skimr::partition()
+```
+
+## when projects get big
+
+break them up! everything can be modular
+
+creating coordinating scripts, functions, and packages
+
+### Make
+
+when your qmd relies on R scripts, Makefile manages these dependencies
+
+everything is a DAG bc of course :(
+
+but this is evil
+
+### Targets
+
+basically Make but for R yay!
+
+super overkill for basic projects
+
+### renv
+
+freeze a file/project so that package/R updates don't break everything
+
+aka uses old versions of things even if you have downloaded the new versions
