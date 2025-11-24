@@ -1,0 +1,72 @@
+---
+title: "Week_13_Notes"
+format: html
+---
+
+# Packages and LLMs
+
+## 2 bonus helpers!!
+
+### Air
+
+fast code-formatter that integrates with R studio
+
+automatically formats your code according to tidyverse (or another) style guide
+
+rn works on script files but not qmd
+
+only formats, does not change your code/optimize it at all
+
+### lintr
+
+like a lint roller or grammar checker
+
+does static analysis of the code and points out errors (and potentially how to fix them)
+
+new version called Jarl works good on top of Air
+
+can choose which rules it will enforce
+
+### also look at code snippets for shortcuts!
+
+## package workflow
+
+easy way to share/distribute code and data together
+
+also good for using something across multiple projects
+
+packages are just projects with a very specific structure
+
+usethis has a create_package() that lets you create a package as well as the rest of a package workflow
+
+and then you can make a website for the package with pkgdown
+
+## LLMs 
+
+learn how they work
+
+things be changing all the time very scarily
+
+there are many ways to use and also not use them
+
+if you use one of these and it fucks something up, it is your fault
+
+it is not learning anything when you talk to it; it's lowkey kind of a giant plinko machine
+
+### general use categories
+
+-   as a chatbot helping you search the documentation
+
+-   as a chatbot helping you write small sections of code
+
+-   as an agent, integreated into the IDE, allowed to edit files and run tools
+
+-   as an API you can call within R to do things that LLMs are actually uniquely good at
+
+### code-writing use cases
+
+finding the prime factors of 91 analogy (two steps: solve and check)
+
+tangent about public use cryptography that was very unnerving
+
+you can have LLMs do the solve, but you **must** be able to do the check
